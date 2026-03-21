@@ -51,7 +51,7 @@
     //--- Utils
     function isStringType(obj) { return typeof obj === 'string'; }
     function isArrayType(obj) { return obj instanceof Array; }
-    function isObjectType(obj) { return typeof obj === 'object'; }
+    function isObjectType(obj) { return typeof obj === 'object' && obj !== null; }
     function isUndefined(obj) { return typeof obj === 'undefined'; }
     function buildVenderPropertyDict(propertyNames, value) {
         const d = {};
@@ -268,7 +268,12 @@
         ytwp.setTheaterMode(true)
     }
     ytwp.enterTheaterMode();
-    uw.addEventListener('resize', ytwp.enterTheaterMode);
+ 
+    let _resizeTimer = 0;
+    uw.addEventListener('resize', function() {
+        clearTimeout(_resizeTimer);
+        _resizeTimer = setTimeout(ytwp.enterTheaterMode, 50);
+    });
  
     ytwp.detectPlayerUnavailable = function() {
         if (document.querySelector('[player-unavailable]')) {
@@ -301,17 +306,18 @@
     }
  
     ytwp.onScroll = function() {
+        const scrollY = uw.scrollY;
         const viewportHeight = document.documentElement.clientHeight;
  
         // topOfPageClassId
-        if (ytwp.isWatchPage && uw.scrollY == 0) {
+        if (ytwp.isWatchPage && scrollY == 0) {
             document.body.classList.add(topOfPageClassId);
         } else {
             document.body.classList.remove(topOfPageClassId);
         }
  
         // viewingVideoClassId
-        if (ytwp.isWatchPage && uw.scrollY <= viewportHeight) {
+        if (ytwp.isWatchPage && scrollY <= viewportHeight) {
             document.body.classList.add(viewingVideoClassId);
         } else {
             document.body.classList.remove(viewingVideoClassId);
@@ -813,7 +819,6 @@
     }
  
     ytwp.updatePlayer = function() {
-        ytwp.removeSearchAutofocus();
         ytwp.enterTheaterMode();
         ytwp.detectPlayerUnavailable();
     }
@@ -839,14 +844,14 @@
         return false
     }
     function cancelIfToggleKey(validKeyCallback, e) {
-        const isKey = e.key === scriptToggleKey
+        if (e.key !== scriptToggleKey) return
         const validTarget = (
             e.target === document.body
             || e.target.id === 'player-api'
             || e.target.id === 'movie_player'
             || childOf(e.target, document.querySelector('#movie_player'))
         )
-        if (validTarget && isKey) {
+        if (validTarget) {
             e.preventDefault()
             e.stopPropagation()
             if (validKeyCallback) {
