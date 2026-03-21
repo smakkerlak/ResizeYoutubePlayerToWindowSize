@@ -76,7 +76,7 @@
     //--- Stylesheet
     var JSStyleSheet = function(id) {
         this.id = id;
-        this.stylesheet = '';
+        this.rules = [];
     };
  
     JSStyleSheet.prototype.buildRule = function(selector, styles) {
@@ -87,23 +87,26 @@
         return selector + " {\n" + s + "}\n";
     };
  
+    // Accepts either (selector, stylesObject) or (selector, property, value).
     JSStyleSheet.prototype.appendRule = function(selector, k, v) {
         if (isArrayType(selector))
             selector = selector.join(',\n');
-        var newStyle;
-        if (!isUndefined(k) && !isUndefined(v) && isStringType(k)) { // v can be any type (as we stringify it).
-            var d = {};
-            d[k] = v;
-            newStyle = this.buildRule(selector, d);
-        } else if (!isUndefined(k) && isUndefined(v) && isObjectType(k)) {
-            newStyle = this.buildRule(selector, k);
+        var styles;
+        if (isStringType(k) && !isUndefined(v)) {
+            styles = {};
+            styles[k] = v;
+        } else if (isObjectType(k) && isUndefined(v)) {
+            styles = k;
         } else {
-            // Invalid Arguments
-            console.log('Illegal arguments', arguments);
+            console.log('JSStyleSheet.appendRule: illegal arguments', arguments);
             return;
         }
+        this.rules.push(this.buildRule(selector, styles));
+    };
  
-        this.stylesheet += newStyle;
+    // Appends a raw CSS string (e.g. @media blocks) directly to the stylesheet.
+    JSStyleSheet.prototype.appendRaw = function(str) {
+        this.rules.push(str);
     };
  
     JSStyleSheet.injectIntoHeader = function(injectedStyleId, stylesheet) {
@@ -118,7 +121,7 @@
     };
  
     JSStyleSheet.prototype.injectIntoHeader = function() {
-        JSStyleSheet.injectIntoHeader(this.id, this.stylesheet);
+        JSStyleSheet.injectIntoHeader(this.id, this.rules.join(''));
     };
  
     //--- Constants
@@ -580,15 +583,15 @@
                 'left': 'calc((100vw - 1066px)/2 + 640px + 10px)',
                 'width': '416px',
             });
-            ytwp.style.stylesheet += '@media screen and (min-height: 630px) and (min-width: 1294px) {\n';
+            ytwp.style.appendRaw('@media screen and (min-height: 630px) and (min-width: 1294px) {\n');
             ytwp.style.appendRule(scriptSelector + ' #player .player-height#watch-appbar-playlist', {
                 'left': 'calc((100vw - 1280px)/2 + 854px + 10px)',
             });
-            ytwp.style.stylesheet += '}\n @media screen and (min-width: 1720px) and (min-height:980px) {\n';
+            ytwp.style.appendRaw('}\n @media screen and (min-width: 1720px) and (min-height:980px) {\n');
             ytwp.style.appendRule(scriptSelector + ' #player .player-height#watch-appbar-playlist', {
                 'left': 'calc((100vw - 1706px)/2 + 1280px + 10px)',
             });
-            ytwp.style.stylesheet += '}\n';
+            ytwp.style.appendRaw('}\n');
  
             //---
             // Material UI
