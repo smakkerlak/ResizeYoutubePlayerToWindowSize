@@ -743,6 +743,8 @@
                 } else {
                     ytwp.error('materialPageTransition: player did not appear after ' + INIT_RETRY_MAX + ' retries, giving up')
                 }
+            } else {
+                ytwp.observePlayer();
             }
         } else {
             ytwp.event.onDispose();
@@ -769,30 +771,33 @@
         document.addEventListener('yt-navigate-finish', function(e){ ytwp.log('document.yt-navigate-finish', e)})
     };
  
+    ytwp.playerObservers = [];
+ 
+    ytwp.observePlayer = function() {
+        ytwp.playerObservers.forEach(function(obs) { if (obs) obs.disconnect(); });
+        ytwp.playerObservers = [];
+ 
+        var debounceTimer = 0;
+        function onMutation() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(ytwp.updatePlayer, 50);
+        }
+        ytwp.playerObservers.push(observe('ytd-page-manager', { childList: true }, onMutation));
+        ytwp.playerObservers.push(observe('ytd-watch-flexy', { attributes: true, attributeFilter: ['theater', 'hidden'] }, onMutation));
+        ytwp.playerObservers.push(observe('ytd-watch-grid',  { attributes: true, attributeFilter: ['theater', 'hidden'] }, onMutation));
+    }
+ 
     ytwp.main = function() {
         ytwp.registerListeners();
         ytwp.init();
         ytwp.fixMasthead();
+        ytwp.observePlayer();
     };
  
     ytwp.main();
  
-    ytwp.updatePlayerAttempts = -1;
-    ytwp.updatePlayerMaxAttempts = 150; // 60fps = 2.5sec
     ytwp.attemptToUpdatePlayer = function() {
-        if (0 <= ytwp.updatePlayerAttempts && ytwp.updatePlayerAttempts < ytwp.updatePlayerMaxAttempts) {
-            ytwp.updatePlayerAttempts = 0;
-        } else {
-            ytwp.updatePlayerAttempts = 0;
-            ytwp.attemptToUpdatePlayerTick();
-        }
-    }
-    ytwp.attemptToUpdatePlayerTick = function() {
-        if (ytwp.updatePlayerAttempts < ytwp.updatePlayerMaxAttempts) {
-            ytwp.updatePlayerAttempts += 1;
-            ytwp.updatePlayer();
-            requestAnimationFrame(ytwp.attemptToUpdatePlayerTick);
-        }
+        ytwp.updatePlayer();
     }
  
     ytwp.updatePlayer = function() {
@@ -808,7 +813,7 @@
   
     //--- Main
     ytwp.materialPageTransition()
-    setInterval(ytwp.updatePlayer, 2500);
+    setInterval(ytwp.updatePlayer, 5000);
  
     //--- Keyboard Shortcut
     function childOf(child, ancestor) {
