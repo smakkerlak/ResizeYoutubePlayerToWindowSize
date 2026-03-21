@@ -1,22 +1,22 @@
 // ==UserScript==
-// @name           Resize YT To Window Size
-// @description    Moves the YouTube video to the top of the website and fill the window with the video player.
-// @author         Chris H (Zren / Shade)
-// @license        MIT
-// @icon           https://s.ytimg.com/yts/img/favicon_32-vflOogEID.png
-// @homepageURL    https://github.com/Zren/ResizeYoutubePlayerToWindowSize/
-// @namespace      http://xshade.ca
-// @version        139
-// @include        http*://*.youtube.com/*
-// @include        http*://youtube.com/*
-// @include        http*://*.youtu.be/*
-// @include        http*://youtu.be/*
-// @grant          none
+// @name            Resize YT To Window Size
+// @description     Moves the YouTube video to the top of the website and fill the window with the video player.
+// @author          Chris H (Zren / Shade)
+// @license         MIT
+// @icon            https://s.ytimg.com/yts/img/favicon_32-vflOogEID.png
+// @homepageURL     https://github.com/Zren/ResizeYoutubePlayerToWindowSize/
+// @namespace       http://xshade.ca
+// @version         139
+// @include         http*://*.youtube.com/*
+// @include         http*://youtube.com/*
+// @include         http*://*.youtu.be/*
+// @include         http*://youtu.be/*
+// @grant           none
 // ==/UserScript==
 
-// Github:         https://github.com/Zren/ResizeYoutubePlayerToWindowSize
-// GreasyFork:     https://greasyfork.org/scripts/811-resize-yt-to-window-size
-// OpenUserJS.org: https://openuserjs.org/scripts/zren/Resize_YT_To_Window_Size
+// Github:          https://github.com/Zren/ResizeYoutubePlayerToWindowSize
+// GreasyFork:      https://greasyfork.org/scripts/811-resize-yt-to-window-size
+// OpenUserJS.org:  https://openuserjs.org/scripts/zren/Resize_YT_To_Window_Size
 // Userscripts.org: http://userscripts-mirror.org/scripts/show/153699
 
 (function (window) {
