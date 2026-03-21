@@ -23,16 +23,16 @@
     "use strict";
  
     //--- Settings
-    var playerHeight = '100vh';
-    var enableOnLoad = true;
-    var scriptToggleKey = 'w';
+    const playerHeight = '100vh';
+    const enableOnLoad = true;
+    const scriptToggleKey = 'w';
  
     //--- Imported Globals
     // yt
     // ytcenter
     // html5Patched (Youtube+)
     // ytplayer
-    var uw = window;
+    const uw = window;
  
     //--- Already Loaded?
     // GreaseMonkey loads this script twice for some reason.
@@ -54,18 +54,18 @@
     function isObjectType(obj) { return typeof obj === 'object'; }
     function isUndefined(obj) { return typeof obj === 'undefined'; }
     function buildVenderPropertyDict(propertyNames, value) {
-        var d = {};
-        for (var i in propertyNames)
+        const d = {};
+        for (const i in propertyNames)
             d[propertyNames[i]] = value;
         return d;
     }
     function observe(selector, config, callback) {
-        var observer = new MutationObserver(function(mutations) {
+        const observer = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation){
                 callback(mutation);
             });
         });
-        var target = document.querySelector(selector);
+        const target = document.querySelector(selector);
         if (!target) {
             return null;
         }
@@ -74,14 +74,14 @@
     }
  
     //--- Stylesheet
-    var JSStyleSheet = function(id) {
+    const JSStyleSheet = function(id) {
         this.id = id;
         this.rules = [];
     };
  
     JSStyleSheet.prototype.buildRule = function(selector, styles) {
-        var s = "";
-        for (var key in styles) {
+        let s = "";
+        for (const key in styles) {
             s += "\t" + key + ": " + styles[key] + ";\n";
         }
         return selector + " {\n" + s + "}\n";
@@ -91,7 +91,7 @@
     JSStyleSheet.prototype.appendRule = function(selector, k, v) {
         if (isArrayType(selector))
             selector = selector.join(',\n');
-        var styles;
+        let styles;
         if (isStringType(k) && !isUndefined(v)) {
             styles = {};
             styles[k] = v;
@@ -110,7 +110,7 @@
     };
  
     JSStyleSheet.injectIntoHeader = function(injectedStyleId, stylesheet) {
-        var styleElement = document.getElementById(injectedStyleId);
+        let styleElement = document.getElementById(injectedStyleId);
         if (!styleElement) {
             styleElement = document.createElement('style');
             styleElement.type = 'text/css';
@@ -125,26 +125,26 @@
     };
  
     //--- Constants
-    var scriptShortName = 'ytwp'; // YT Window Player
-    var scriptStyleId = scriptShortName + '-style'; // ytwp-style
-    var scriptBodyClassId = scriptShortName + '-window-player'; // .ytwp-window-player
-    var viewingVideoClassId = scriptShortName + '-viewing-video'; // .ytwp-viewing-video
-    var topOfPageClassId = scriptShortName + '-scrolltop'; // .ytwp-scrolltop
+    const scriptShortName = 'ytwp'; // YT Window Player
+    const scriptStyleId = scriptShortName + '-style'; // ytwp-style
+    const scriptBodyClassId = scriptShortName + '-window-player'; // .ytwp-window-player
+    const viewingVideoClassId = scriptShortName + '-viewing-video'; // .ytwp-viewing-video
+    const topOfPageClassId = scriptShortName + '-scrolltop'; // .ytwp-scrolltop
  
-    var scriptHtmlSelector = 'html:not([fullscreen="true"])';
-    var scriptBodySelector = 'body.' + scriptBodyClassId; // body.ytwp-window-player
+    const scriptHtmlSelector = 'html:not([fullscreen="true"])';
+    let scriptBodySelector = 'body.' + scriptBodyClassId; // body.ytwp-window-player
     scriptBodySelector += ':not(.efyt-mini-player)'; // Support "Enhancer for Youtube" (Pull Request #51)
         
-    var scriptSelector = scriptHtmlSelector + ' ' + scriptBodySelector;
+    let scriptSelector = scriptHtmlSelector + ' ' + scriptBodySelector;
  
-    var videoContainerId = 'player';
-    var videoContainerPlacemarkerId = scriptShortName + '-placemarker'; // ytwp-placemarker
+    const videoContainerId = 'player';
+    const videoContainerPlacemarkerId = scriptShortName + '-placemarker'; // ytwp-placemarker
  
-    var transitionProperties = ["transition", "-ms-transition", "-moz-transition", "-webkit-transition", "-o-transition"];
-    var transformProperties = ["transform", "-ms-transform", "-moz-transform", "-webkit-transform", "-o-transform"];
+    const transitionProperties = ["transition", "-ms-transition", "-moz-transition", "-webkit-transition", "-o-transition"];
+    const transformProperties = ["transform", "-ms-transform", "-moz-transform", "-webkit-transform", "-o-transform"];
  
     //--- YTWP
-    var ytwp = uw.ytwp = {
+    const ytwp = uw.ytwp = {
         scriptShortName: scriptShortName, // YT Window Player
         log_: function(logger, args) { logger.apply(console, ['[' + this.scriptShortName + '] '].concat(Array.prototype.slice.call(args))); return 1; },
         log: function() { return this.log_(console.log, arguments); },
@@ -157,10 +157,10 @@
  
     ytwp.debugPage = function() {
         function prettyHtml(el) {
-            var s = el.outerHTML
+            const s = el.outerHTML
             return s.substr(0, s.indexOf('>')+1)
         }
-        var defStyle = {
+        const defStyle = {
             'display':'block', 'position': 'static',
             'left': 'auto', 'right': 'auto', 'top': 'auto', 'bottom': 'auto',
             'padding-left':'0px', 'padding-right':'0px', 'padding-top':'0px', 'padding-bottom':'0px',
@@ -168,13 +168,13 @@
             'width': 'auto', 'min-width': 'auto', 'max-width': 'auto',
             'height': 'auto', 'min-height': 'auto', 'max-height': 'auto',
         }
-        var keyFilter = Object.keys(defStyle)
-        var node = document.querySelector('#movie_player video')
-        var outStr = ''
+        const keyFilter = Object.keys(defStyle)
+        let node = document.querySelector('#movie_player video')
+        let outStr = ''
         while (node && node.parentNode) {
-            var style = getComputedStyle(node)
-            var styleDiff = {}
-            for (var key of style) {
+            const style = getComputedStyle(node)
+            const styleDiff = {}
+            for (const key of style) {
                 if (keyFilter.includes(key) && style[key] != defStyle[key]) {
                     styleDiff[key] = style[key]
                 }
@@ -187,7 +187,7 @@
     }
  
     ytwp.hasYoutubeChanged = function() {
-        var tree = [
+        const tree = [
             'html',
             'body',
             'ytd-app',
@@ -203,15 +203,15 @@
             '.html5-video-container',
             'video.html5-main-video',
         ]
-        tree = tree.reverse()
-        var node = document.querySelector(tree[0])
+        tree.reverse()
+        let node = document.querySelector(tree[0])
         if (!node) {
             ytwp.error('YT has changed!', tree[0], 'no longer exists!')
             return true
         }
-        for (var i = 1; i < tree.length; i++) {
-            var parent = node.parentNode
-            var selector = tree[i]
+        for (let i = 1; i < tree.length; i++) {
+            const parent = node.parentNode
+            const selector = tree[i]
             if (parent.matches(selector)) {
                 node = parent
             } else {
@@ -236,13 +236,13 @@
     };
  
     ytwp.setTheaterMode = function(enable) {
-        var watchElement = document.querySelector('ytd-watch:not([hidden])') || document.querySelector('ytd-watch-flexy:not([hidden])') || document.querySelector('ytd-watch-grid:not([hidden])')
+        let watchElement = document.querySelector('ytd-watch:not([hidden])') || document.querySelector('ytd-watch-flexy:not([hidden])') || document.querySelector('ytd-watch-grid:not([hidden])')
         if (watchElement) {
-            var isTheater = watchElement.hasAttribute('theater')
+            const isTheater = watchElement.hasAttribute('theater')
             if (enable != isTheater) {
-                var sizeButton = document.querySelector(watchElement.tagName + ':not([hidden]) button.ytp-size-button')
+                let sizeButton = document.querySelector(watchElement.tagName + ':not([hidden]) button.ytp-size-button')
                 if (!sizeButton) {
-                    var screenModeButtons = document.querySelectorAll(watchElement.tagName + ':not([hidden]) button.ytp-screen-mode-settings-button')
+                    const screenModeButtons = document.querySelectorAll(watchElement.tagName + ':not([hidden]) button.ytp-screen-mode-settings-button')
                     sizeButton = screenModeButtons[1] // 2nd button is "Theater mode (t)"
                 }
                 if (sizeButton) {
@@ -251,9 +251,9 @@
             }
             watchElement.canFitTheater_ = true // When it's too small, it disables the theater mode.
         } else if (watchElement = document.querySelector('#page.watch')) {
-            var isTheater = watchElement.classList.contains('watch-stage-mode')
+            const isTheater = watchElement.classList.contains('watch-stage-mode')
             if (enable != isTheater) {
-                var sizeButton = watchElement.querySelector('button.ytp-size-button')
+                const sizeButton = watchElement.querySelector('button.ytp-size-button')
                 if (sizeButton) {
                     sizeButton.click()
                 }
@@ -301,7 +301,7 @@
     }
  
     ytwp.onScroll = function() {
-        var viewportHeight = document.documentElement.clientHeight;
+        const viewportHeight = document.documentElement.clientHeight;
  
         // topOfPageClassId
         if (ytwp.isWatchPage && uw.scrollY == 0) {
@@ -325,7 +325,7 @@
             ytwp.event.buildStylesheet();
             // Duplicate stylesheet targeting data-spf-name if enabled.
             if (uw.spf) {
-                var temp = scriptBodySelector;
+                const temp = scriptBodySelector;
                 scriptBodySelector = 'body[data-spf-name="watch"]';
                 scriptSelector = scriptHtmlSelector + ' ' + scriptBodySelector
                 ytwp.event.buildStylesheet();
@@ -363,7 +363,7 @@
         },
  
         _stylePlayer: function() {
-            var d;
+            let d;
             d = buildVenderPropertyDict(transitionProperties, 'left 0s linear, padding-left 0s linear');
             d['padding'] = '0 !important';
             d['margin'] = '0 !important';
@@ -474,7 +474,7 @@
  
         _styleSidebar: function() {
             // Remove the transition delay as you can see it moving on page load.
-            var d = buildVenderPropertyDict(transitionProperties, 'margin-top 0s linear, padding-top 0s linear');
+            const d = buildVenderPropertyDict(transitionProperties, 'margin-top 0s linear, padding-top 0s linear');
             d['margin-top'] = '0 !important';
             d['top'] = '0 !important';
             ytwp.style.appendRule(scriptSelector + ' #watch7-sidebar', d);
@@ -484,7 +484,7 @@
         _styleMasthead: function() {
             // Absolutely position the fixed header.
             ytwp.style.appendRule('#skip-navigation.ytd-masthead', 'top', '-150vh'); // Normally -1000px can be shorter than screen (Issue #77)
-            var d = buildVenderPropertyDict(transitionProperties, 'top 0s linear !important');
+            const d = buildVenderPropertyDict(transitionProperties, 'top 0s linear !important');
             ytwp.style.appendRule(scriptSelector + '.hide-header-transition #masthead-positioner', d);
             ytwp.style.appendRule(scriptSelector + '.' + viewingVideoClassId + ' #masthead-positioner', {
                 'position': 'absolute',
@@ -577,7 +577,7 @@
                 'max-height': '540px !important',
             });
  
-            var d = buildVenderPropertyDict(transitionProperties, 'transform 0s linear');
+            let d = buildVenderPropertyDict(transitionProperties, 'transform 0s linear');
             ytwp.style.appendRule(scriptSelector + ' #watch-appbar-playlist', d);
             d = buildVenderPropertyDict(transformProperties, 'translateY(0px)');
             d['margin-left'] = '0';
@@ -680,7 +680,7 @@
  
     ytwp.fixMasthead = function() {
         ytwp.log('fixMasthead');
-        var el = document.querySelector('#masthead-positioner-height-offset');
+        const el = document.querySelector('#masthead-positioner-height-offset');
         if (el) {
             ytwp.fixMastheadElement(el);
         }
@@ -697,7 +697,7 @@
  
     JSStyleSheet.injectIntoHeader(scriptStyleId + '-focusfix', 'input#search[autofocus] { display: none; }');
     ytwp.removeSearchAutofocus = function() {
-        var e = document.querySelector('input#search');
+        const e = document.querySelector('input#search');
         if (e) {
             e.removeAttribute('autofocus')
         }
@@ -712,7 +712,7 @@
         }, function(mutation) {
             console.log(mutation.type, mutation)
             if (mutation.attributeName === 'style') {
-                var el = mutation.target;
+                const el = mutation.target;
                 if (el.style.height) { // != ""
                     setTimeout(function(){
                         el.style.height = ""
@@ -725,7 +725,7 @@
     }
  
     //--- Material UI
-    var INIT_RETRY_MAX = 20; // 20 retries x 100ms = 2 seconds max wait
+    const INIT_RETRY_MAX = 20; // 20 retries x 100ms = 2 seconds max wait
  
     ytwp.initRetryCount = 0;
  
@@ -789,7 +789,7 @@
         ytwp.playerObservers.forEach(function(obs) { if (obs) obs.disconnect(); });
         ytwp.playerObservers = [];
  
-        var debounceTimer = 0;
+        let debounceTimer = 0;
         function onMutation() {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(ytwp.updatePlayer, 50);
@@ -829,7 +829,7 @@
  
     //--- Keyboard Shortcut
     function childOf(child, ancestor) {
-        var parent = child.parentNode
+        let parent = child.parentNode
         while (parent) {
             if (parent == ancestor) {
                 return true
@@ -839,8 +839,8 @@
         return false
     }
     function cancelIfToggleKey(validKeyCallback, e) {
-        var isKey = e.key === scriptToggleKey
-        var validTarget = (
+        const isKey = e.key === scriptToggleKey
+        const validTarget = (
             e.target === document.body
             || e.target.id === 'player-api'
             || e.target.id === 'movie_player'
