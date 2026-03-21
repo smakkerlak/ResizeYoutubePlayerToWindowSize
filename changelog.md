@@ -1,5 +1,9 @@
 <h3>Changelog</h3>
 
+## v140 - March 21, 2026
+
+* Update CSS selector for Enhancer for YouTube mini-player
+
 ## v139 - April 10, 2024
 
 * Fix page top margin as certain elements seem to ignore the CSS properties completely (Issue #88)
