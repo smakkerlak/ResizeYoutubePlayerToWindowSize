@@ -338,7 +338,17 @@
         },
         buildStylesheet: function() {
             ytwp.log('buildStylesheet');
-            //--- Browser Scrollbar
+            ytwp.event._styleScrollbar();
+            ytwp.event._stylePlayer();
+            ytwp.event._styleSidebar();
+            ytwp.event._styleMasthead();
+            ytwp.event._styleMiniplayer();
+            ytwp.event._styleMisc();
+            ytwp.event._stylePlaylistBar();
+            ytwp.event._styleMaterialUI();
+        },
+ 
+        _styleScrollbar: function() {
             // Chrome/Webkit
             ytwp.style.appendRule(scriptBodySelector + '::-webkit-scrollbar', {
                 'width': '0 !important',
@@ -350,8 +360,9 @@
             ytwp.style.appendRule('html', {
                 'scrollbar-width': 'none',
             });
+        },
  
-            //--- Video Player
+        _stylePlayer: function() {
             var d;
             d = buildVenderPropertyDict(transitionProperties, 'left 0s linear, padding-left 0s linear');
             d['padding'] = '0 !important';
@@ -363,18 +374,15 @@
                 scriptBodySelector + '.ltr.ytcenter-site-center.ytcenter-non-resize.ytcenter-guide-visible.guide-collapsed #player-legacy',
                 scriptBodySelector + '.ltr.ytcenter-site-center.ytcenter-non-resize.ytcenter-guide-visible.guide-collapsed #watch7-main-container',
             ], d);
-            //
-            d = buildVenderPropertyDict(transitionProperties, 'width 0s linear, left 0s linear');
  
+            d = buildVenderPropertyDict(transitionProperties, 'width 0s linear, left 0s linear');
             // Bugfix for Firefox
             // Parts of the header (search box) are hidden under the player.
             // Firefox doesn't seem to be using the fixed header+guide yet.
             d['float'] = 'initial';
- 
             // Skinny mode
             d['left'] = 0;
             d['margin-left'] = 0;
- 
             ytwp.style.appendRule(scriptBodySelector + ' #player-api', d);
  
             // Theater mode
@@ -416,7 +424,7 @@
                 }
             );
  
-             ytwp.style.appendRule(
+            ytwp.style.appendRule(
                 [
                     scriptSelector + ' #player',
                     scriptSelector + ' .html5-main-video',
@@ -462,20 +470,21 @@
  
             // Fix the top right avatar button
             ytwp.style.appendRule(scriptSelector + ' button.ytp-button.ytp-cards-button', 'top', '0');
+        },
  
-            //--- Sidebar
+        _styleSidebar: function() {
             // Remove the transition delay as you can see it moving on page load.
-            d = buildVenderPropertyDict(transitionProperties, 'margin-top 0s linear, padding-top 0s linear');
+            var d = buildVenderPropertyDict(transitionProperties, 'margin-top 0s linear, padding-top 0s linear');
             d['margin-top'] = '0 !important';
             d['top'] = '0 !important';
             ytwp.style.appendRule(scriptSelector + ' #watch7-sidebar', d);
- 
             ytwp.style.appendRule(scriptSelector + '.cardified-page #watch7-sidebar-contents', 'padding-top', '0');
+        },
  
-            //--- Absolutely position the fixed header.
-            // Masthead
+        _styleMasthead: function() {
+            // Absolutely position the fixed header.
             ytwp.style.appendRule('#skip-navigation.ytd-masthead', 'top', '-150vh'); // Normally -1000px can be shorter than screen (Issue #77)
-            d = buildVenderPropertyDict(transitionProperties, 'top 0s linear !important');
+            var d = buildVenderPropertyDict(transitionProperties, 'top 0s linear !important');
             ytwp.style.appendRule(scriptSelector + '.hide-header-transition #masthead-positioner', d);
             ytwp.style.appendRule(scriptSelector + '.' + viewingVideoClassId + ' #masthead-positioner', {
                 'position': 'absolute',
@@ -493,7 +502,6 @@
                 'top': 'calc(' + playerHeight + ' + 56px) !important',
                 'position': 'absolute !important',
             });
- 
             // Guide
             // When watching the video, we need to line it up with the masthead.
             ytwp.style.appendRule(scriptSelector + '.' + viewingVideoClassId + ' #appbar-guide-menu', {
@@ -511,9 +519,9 @@
                 'top': '0 !important',
                 'position': 'static !important',
             });
+        },
  
-            //---
-            // MiniPlayer-Bar
+        _styleMiniplayer: function() {
             ytwp.style.appendRule(scriptSelector + ' #miniplayer-bar #player', {
                 'position': 'static',
             });
@@ -540,25 +548,27 @@
             ytwp.style.appendRule('.video-stream.html5-main-video', {
                 'top': '0 !important',
             });
+        },
  
-            //---
+        _styleMisc: function() {
             // Hide Scrollbars
             ytwp.style.appendRule(scriptSelector + '.' + topOfPageClassId, 'overflow-x', 'hidden');
  
-            //--- Fix Other Possible Style Issues
+            // Fix Other Possible Style Issues
             ytwp.style.appendRule(scriptSelector + ' #placeholder-player', 'display', 'none');
             ytwp.style.appendRule(scriptSelector + ' #watch-sidebar-spacer', 'display', 'none');
             ytwp.style.appendRule(scriptSelector + ' .skip-nav', 'display', 'none');
  
-            //--- Whitespace Leftover From Moving The Video
+            // Whitespace Leftover From Moving The Video
             ytwp.style.appendRule(scriptSelector + ' #page.watch', 'padding-top', '0');
             ytwp.style.appendRule(scriptSelector + ' .player-branded-banner', 'height', '0');
  
-            //--- Youtube+ Compatiblity
+            // Youtube+ Compatibility
             ytwp.style.appendRule(scriptSelector + ' #body-container', 'position', 'static');
             ytwp.style.appendRule(scriptHtmlSelector + '.part_static_size:not(.content-snap-width-skinny-mode) ' + scriptBodySelector + ' .watch-non-stage-mode #player-playlist', 'width', '1066px');
+        },
  
-            //--- Playlist Bar
+        _stylePlaylistBar: function() {
             ytwp.style.appendRule([
                 scriptSelector + ' #placeholder-playlist',
                 scriptSelector + ' #player .player-height#watch-appbar-playlist',
@@ -567,7 +577,7 @@
                 'max-height': '540px !important',
             });
  
-            d = buildVenderPropertyDict(transitionProperties, 'transform 0s linear');
+            var d = buildVenderPropertyDict(transitionProperties, 'transform 0s linear');
             ytwp.style.appendRule(scriptSelector + ' #watch-appbar-playlist', d);
             d = buildVenderPropertyDict(transformProperties, 'translateY(0px)');
             d['margin-left'] = '0';
@@ -592,9 +602,9 @@
                 'left': 'calc((100vw - 1706px)/2 + 1280px + 10px)',
             });
             ytwp.style.appendRaw('}\n');
+        },
  
-            //---
-            // Material UI
+        _styleMaterialUI: function() {
             ytwp.style.appendRule(scriptSelector + '.ytwp-scrolltop #extra-buttons', 'display', 'none !important');
             ytwp.style.appendRule('ytd-app', 'position', 'static !important');
             ytwp.style.appendRule('ytd-watch #top', 'margin-top', '71px !important'); // 56px (topnav height) + 15px (margin)
@@ -627,7 +637,6 @@
             });
             ytwp.style.appendRule(scriptSelector + ' .ytp-cued-thumbnail-overlay', 'z-index', '10');
  
-            //---
             // Flexy UI
             ytwp.style.appendRule([
                 scriptSelector + ' ytd-watch-flexy[theater] #player-theater-container.ytd-watch-flexy',
