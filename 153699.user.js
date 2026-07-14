@@ -212,7 +212,8 @@
             if (parent.matches(selector)) {
                 node = parent
             } else {
-                ytwp.error('YT has changed!', selector, 'no longer exists!')
+                ytwp.error('YT has changed!', selector, 'no longer matches! parent is:', parent)
+                return true
             }
         }
         return false
@@ -271,7 +272,6 @@
             ytwp.event.removeBodyClass()
         }
     }
-
 
     ytwp.init = function() {
         ytwp.log('init');
@@ -460,7 +460,6 @@
             // Fix the top right avatar button
             ytwp.style.appendRule(scriptSelector + ' button.ytp-button.ytp-cards-button', 'top', '0');
 
-
             //--- Sidebar
             // Remove the transition delay as you can see it moving on page load.
             d = buildVenderPropertyDict(transitionProperties, 'margin-top 0s linear, padding-top 0s linear');
@@ -510,7 +509,6 @@
                 'position': 'static !important',
             });
 
-
             //---
             // MiniPlayer-Bar
             ytwp.style.appendRule(scriptSelector + ' #miniplayer-bar #player', {
@@ -543,7 +541,6 @@
             //---
             // Hide Scrollbars
             ytwp.style.appendRule(scriptSelector + '.' + topOfPageClassId, 'overflow-x', 'hidden');
-
 
             //--- Fix Other Possible Style Issues
             ytwp.style.appendRule(scriptSelector + ' #placeholder-player', 'display', 'none');
@@ -668,6 +665,7 @@
             ytwp.log('Removed ' + scriptBodySelector);
         },
     };
+
     ytwp.fixMasthead = function() {
         ytwp.log('fixMasthead');
         var el = document.querySelector('#masthead-positioner-height-offset');
@@ -789,12 +787,10 @@
         document.body.classList.toggle('ytwp-window-player')
         ytwp.setTheaterMode(document.body.classList.contains('ytwp-window-player'))
     }
-
-
+  
     //--- Main
     ytwp.materialPageTransition()
     setInterval(ytwp.updatePlayer, 2500);
-
 
     //--- Keyboard Shortcut
     function childOf(child, ancestor) {
@@ -841,5 +837,4 @@
             }
         });
     }
-
 })(window);
