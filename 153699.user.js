@@ -137,9 +137,6 @@
         
     let scriptSelector = scriptHtmlSelector + ' ' + scriptBodySelector;
  
-    const videoContainerId = 'player';
-    const videoContainerPlacemarkerId = scriptShortName + '-placemarker'; // ytwp-placemarker
- 
     const transitionProperties = ["transition", "-ms-transition", "-moz-transition", "-webkit-transition", "-o-transition"];
     const transformProperties = ["transform", "-ms-transform", "-moz-transform", "-webkit-transform", "-o-transform"];
  
@@ -250,12 +247,15 @@
                 }
             }
             watchElement.canFitTheater_ = true // When it's too small, it disables the theater mode.
-        } else if (watchElement = document.querySelector('#page.watch')) {
-            const isTheater = watchElement.classList.contains('watch-stage-mode')
-            if (enable != isTheater) {
-                const sizeButton = watchElement.querySelector('button.ytp-size-button')
-                if (sizeButton) {
-                    sizeButton.click()
+        } else {
+            watchElement = document.querySelector('#page.watch')
+            if (watchElement) {
+                const isTheater = watchElement.classList.contains('watch-stage-mode')
+                if (enable != isTheater) {
+                    const sizeButton = watchElement.querySelector('button.ytp-size-button')
+                    if (sizeButton) {
+                        sizeButton.click()
+                    }
                 }
             }
         }
@@ -325,7 +325,8 @@
             ytwp.event.buildStylesheet();
             // Duplicate stylesheet targeting data-spf-name if enabled.
             if (uw.spf) {
-                const temp = scriptBodySelector;
+                const savedBodySelector = scriptBodySelector;
+                const savedSelector = scriptSelector;
                 scriptBodySelector = 'body[data-spf-name="watch"]';
                 scriptSelector = scriptHtmlSelector + ' ' + scriptBodySelector
                 ytwp.event.buildStylesheet();
@@ -333,6 +334,8 @@
                     'position': 'absolute',
                     'top': playerHeight + ' !important'
                 });
+                scriptBodySelector = savedBodySelector;
+                scriptSelector = savedSelector;
             }
             ytwp.style.injectIntoHeader();
         },
@@ -710,7 +713,6 @@
         observe('#masthead-positioner-height-offset', {
             attributes: true,
         }, function(mutation) {
-            console.log(mutation.type, mutation)
             if (mutation.attributeName === 'style') {
                 const el = mutation.target;
                 if (el.style.height) { // != ""
@@ -774,13 +776,11 @@
     };
  
     ytwp.registerMaterialListeners = function() {
-        // Using YouTube's own navigation events (more reliable than history patching).
-        document.addEventListener('yt-page-data-fetched', ytwp.materialPageTransition)
+        // yt-navigate-finish fires once per navigation when the new page is committed.
+        // yt-page-data-fetched fires earlier (data ready, DOM still rendering) and also
+        // on the same navigation — registering both caused materialPageTransition to run
+        // twice per page change. yt-navigate-finish alone is the correct trigger.
         document.addEventListener('yt-navigate-finish', ytwp.materialPageTransition)
- 
-        // Debugging
-        document.addEventListener('yt-page-data-fetched', function(e){ ytwp.log('document.yt-page-data-fetched', e)})
-        document.addEventListener('yt-navigate-finish', function(e){ ytwp.log('document.yt-navigate-finish', e)})
     };
  
     ytwp.playerObservers = [];
@@ -849,7 +849,6 @@
         if (validTarget && isKey) {
             e.preventDefault()
             e.stopPropagation()
-            console.log('cancelIfToggleKey.validKeyCallback', validKeyCallback, 'e', e)
             if (validKeyCallback) {
                 validKeyCallback()
             }
